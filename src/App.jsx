@@ -10,12 +10,7 @@ function App() {
   const [columns, setColumns] = useState();
   const [data, setData] = useState([]);
 
-  const click = (obj) => {
-    console.log("obj", obj);
-
-    const prod = {};
-    const myGrammar =
-      "E  -> T E' ; E'  -> + T E' |  ; T  -> F T' ; T'  -> * F T' |  ; F  -> id | ( E )";
+  const click = (obj, myGrammar) => {
     const { firstSet, followSet } = firstFollow(myGrammar);
     const nonTerminals = Object.keys(followSet);
     const firstKeys = Object.keys(firstSet);
@@ -23,7 +18,7 @@ function App() {
     firstKeys?.forEach((symbol) =>
       !nonTerminals?.includes(symbol) ? terminals.push(symbol) : null
     );
-    console.log(firstSet);
+
     nonTerminals.forEach((nt) => {
       const followObj = followSet[nt];
       for (const key in followObj) {
@@ -33,15 +28,7 @@ function App() {
       followSet[nt] = followObj;
     });
 
-    console.log(followSet);
-
-    console.log("terminals", terminals);
-
-    console.log("non-terminals", nonTerminals);
-
     nonTerminals.forEach((nt) => {
-      console.log("nt", nt);
-
       const nonTerminalFirstSet = Object.keys(firstSet[nt]);
       const nonTerminalFollowSet = Object.keys(followSet[nt]);
 
@@ -74,11 +61,11 @@ function App() {
       if (epsilonFound) {
         filledColumns = { ...filledColumns, ...followSet[nt] };
       }
+
       const concatRule = obj[nt].reduce(
         (acc, prodRules) => acc + prodRules,
         ""
       );
-      console.log("obj[nt]", obj[nt]);
 
       // console.log(filledColumns);
       nonTerminalFirstSet.forEach(
@@ -116,31 +103,29 @@ function App() {
     // for (const key in body) {
     //   console.log(body[key].split(" ")[0]);
     // }
-    const changedGrammar = [];
+    console.log(grammar);
+
+    const myGrammar = grammar.reduce((acc, { rule }) => acc + rule + ";", "");
+    console.log("myGrammar", myGrammar);
+
     const obj = {};
     grammar.forEach(({ rule }, index) => {
       // console.log(rule, index);
-      const prodRules = rule.split(/[->]/);
+      const prodRules = rule.split("->");
       const nonTerminal = prodRules[0].trim();
 
-      obj[nonTerminal] = prodRules.slice(2).map((rule) => rule.trim());
+      obj[nonTerminal] = prodRules.slice(1).map((rule) => rule.trim());
     });
     console.log(obj, "obj handleFinish");
 
     // console.log(obj["F"].forEach((string)=>string.includes("id")));
-    click(obj);
+    click(obj, myGrammar);
   };
 
   return (
     <>
       <Button onClick={click}>Click me</Button>
       <Form onFinish={handleFinish}>
-        {/* <Form.Item name={"field1"}>
-          <Input></Input>
-        </Form.Item>
-        <Form.Item name={"field2"}>
-          <Input></Input>
-        </Form.Item> */}
         <Form.List name="grammar">
           {(fields, { add, remove }) => (
             <>
