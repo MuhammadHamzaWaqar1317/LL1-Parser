@@ -15,7 +15,7 @@ function App() {
 
     const prod = {};
     const myGrammar =
-      "E  -> T E' ; E'  -> + T E' | ε ; T  -> F T' ; T'  -> * F T' | ε ; F  -> id | ( E )";
+      "E  -> T E' ; E'  -> + T E' |  ; T  -> F T' ; T'  -> * F T' |  ; F  -> id | ( E )";
     const { firstSet, followSet } = firstFollow(myGrammar);
     const nonTerminals = Object.keys(followSet);
     const firstKeys = Object.keys(firstSet);
@@ -43,13 +43,43 @@ function App() {
       console.log("nt", nt);
 
       const nonTerminalFirstSet = Object.keys(firstSet[nt]);
+      const nonTerminalFollowSet = Object.keys(followSet[nt]);
+
+      const createTableFirstSet = nonTerminalFirstSet.reduce(
+        (acc, symbol, index) => {
+          symbol = symbol == "" ? "ε" : symbol;
+          if (index == nonTerminalFirstSet.length - 1) {
+            return acc + symbol;
+          }
+          return acc + symbol + ",";
+        },
+
+        ""
+      );
+
+      const createTableFollowSet = nonTerminalFollowSet.reduce(
+        (acc, symbol, index) =>
+          index == nonTerminalFollowSet.length - 1
+            ? acc + symbol
+            : acc + symbol + ",",
+        ""
+      );
+
       const epsilonFound = nonTerminalFirstSet.includes("");
-      let filledColumns = { nonTerminal: nt };
+      let filledColumns = {
+        nonTerminal: nt,
+        firstSet: `{${createTableFirstSet}}`,
+        followSet: `{${createTableFollowSet}}`,
+      };
       if (epsilonFound) {
         filledColumns = { ...filledColumns, ...followSet[nt] };
       }
-      const concatRule = "";
-      // obj[nt].forEach((rule) => concatRule + rule);
+      const concatRule = obj[nt].reduce(
+        (acc, prodRules) => acc + prodRules,
+        ""
+      );
+      console.log("obj[nt]", obj[nt]);
+
       // console.log(filledColumns);
       nonTerminalFirstSet.forEach(
         (keys) =>
@@ -74,6 +104,8 @@ function App() {
     }));
     setColumns([
       { dataIndex: "nonTerminal", key: "nonTerminal" },
+      { title: "First Set", dataIndex: "firstSet", key: "firstSet" },
+      { title: "Follow Set", dataIndex: "followSet", key: "followSet" },
       ...columnTerminals,
       { title: "$", dataIndex: "$", key: "$" },
     ]);
@@ -88,12 +120,12 @@ function App() {
     const obj = {};
     grammar.forEach(({ rule }, index) => {
       // console.log(rule, index);
-      const prodRules = rule.split(/[->|]/);
+      const prodRules = rule.split(/[->]/);
       const nonTerminal = prodRules[0].trim();
 
-      obj[nonTerminal] = prodRules.slice(2);
+      obj[nonTerminal] = prodRules.slice(2).map((rule) => rule.trim());
     });
-    console.log(obj);
+    console.log(obj, "obj handleFinish");
 
     // console.log(obj["F"].forEach((string)=>string.includes("id")));
     click(obj);
