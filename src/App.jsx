@@ -10,7 +10,7 @@ function App() {
   const [columns, setColumns] = useState();
   const [data, setData] = useState([]);
 
-  const click = (obj, myGrammar) => {
+  const click = (terminalProdRules, myGrammar) => {
     const { firstSet, followSet } = firstFollow(myGrammar);
     const nonTerminals = Object.keys(followSet);
     const firstKeys = Object.keys(firstSet);
@@ -62,7 +62,7 @@ function App() {
         filledColumns = { ...filledColumns, ...followSet[nt] };
       }
 
-      const concatRule = obj[nt].reduce(
+      const concatRule = terminalProdRules[nt].reduce(
         (acc, prodRules) => acc + prodRules,
         ""
       );
@@ -108,18 +108,20 @@ function App() {
     const myGrammar = grammar.reduce((acc, { rule }) => acc + rule + ";", "");
     console.log("myGrammar", myGrammar);
 
-    const obj = {};
+    const terminalProdRules = {};
     grammar.forEach(({ rule }, index) => {
       // console.log(rule, index);
       const prodRules = rule.split("->");
       const nonTerminal = prodRules[0].trim();
 
-      obj[nonTerminal] = prodRules.slice(1).map((rule) => rule.trim());
+      terminalProdRules[nonTerminal] = prodRules
+        .slice(1)
+        .map((rule) => rule.trim());
     });
-    console.log(obj, "obj handleFinish");
+    console.log(terminalProdRules, "terminalProdRules handleFinish");
 
-    // console.log(obj["F"].forEach((string)=>string.includes("id")));
-    click(obj, myGrammar);
+    // console.log(terminalProdRules["F"].forEach((string)=>string.includes("id")));
+    click(terminalProdRules, myGrammar);
   };
 
   return (
