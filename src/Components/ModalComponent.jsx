@@ -7,6 +7,7 @@ function ModalComponent({
   isModalOpen,
   setIsModalOpen,
   generateFirstFollowTable,
+  setData,
 }) {
   const [form] = Form.useForm();
 
@@ -16,6 +17,7 @@ function ModalComponent({
 
   const handleOk = () => {
     form.submit();
+    setData([]);
   };
 
   const handleFinish = (body) => {

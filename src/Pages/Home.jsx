@@ -10,6 +10,7 @@ function Home() {
 
   const generateFirstFollowTable = (terminalProdRules, combinedGrammar) => {
     const { firstSet, followSet } = firstFollow(combinedGrammar);
+
     const nonTerminals = Object.keys(followSet);
     const firstKeys = Object.keys(firstSet);
     const terminals = [];
@@ -104,6 +105,7 @@ function Home() {
             isModalOpen={isModalOpen}
             setIsModalOpen={setIsModalOpen}
             generateFirstFollowTable={generateFirstFollowTable}
+            setData={setData}
           />
           <Table columns={columns} dataSource={data} />
         </div>
