@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import firstFollow from "firstfollow";
 import { Button, Table } from "antd";
 import ModalComponent from "../Components/ModalComponent";
+import ModalInstructions from "../Components/ModalInstructions";
 
 function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [instructionOpen, setInstructonOpen] = useState(false);
   const [columns, setColumns] = useState();
   const [data, setData] = useState([]);
 
@@ -97,9 +99,22 @@ function Home() {
       <div className="max-h-[100vh] p-3">
         <div className="flex flex-col gap-3">
           <h1 className="text-blue-600 text-2xl text-center">LL1 Parser</h1>
-          <Button className="self-end" onClick={() => setIsModalOpen(true)}>
-            Add Grammar
-          </Button>
+          <div className="flex gap-1 justify-end">
+            <Button className="self-end" onClick={() => setIsModalOpen(true)}>
+              Add Grammar
+            </Button>
+
+            <Button
+              className="self-end"
+              onClick={() => setInstructonOpen(true)}
+            >
+              Instructions
+            </Button>
+          </div>
+          <ModalInstructions
+            setIsModalOpen={setInstructonOpen}
+            isModalOpen={instructionOpen}
+          />
 
           <ModalComponent
             isModalOpen={isModalOpen}
